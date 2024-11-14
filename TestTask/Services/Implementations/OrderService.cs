@@ -27,6 +27,7 @@ public class OrderService : IOrderService
     {
         return await _dbContext.Orders
             .AsNoTracking()
+            .Include(o => o.User)
             .Where(o => o.User.Status == UserStatus.Active)
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync();
