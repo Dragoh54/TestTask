@@ -19,7 +19,6 @@ public class UserService : IUserService
     {
         return await _dbContext.Users
             .AsNoTracking()
-            .Include(u => u.Orders)
             .OrderByDescending(u => u.Orders
                 .Where(o => o.CreatedAt.Year == 2003 && o.Status == OrderStatus.Delivered) 
                 .Sum(o => o.Price * o.Quantity))
@@ -30,8 +29,14 @@ public class UserService : IUserService
     {
         return await _dbContext.Users
             .AsNoTracking()
-            .Include(u => u.Orders)
-            .OrderByDescending(u => u.Orders.Where(o => o.CreatedAt.Year == 2010))
+            .Select(u => new 
+            {
+                User = u,
+                OrderCountIn2010 = u.Orders
+                    .Count(o => o.CreatedAt.Year == 2010 && o.Status == OrderStatus.Paid)
+            })
+            .OrderByDescending(u => u.OrderCountIn2010)
+            .Select(u => u.User) 
             .ToListAsync();
     }
 }

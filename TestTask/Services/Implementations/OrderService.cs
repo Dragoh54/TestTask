@@ -22,12 +22,11 @@ public class OrderService : IOrderService
             .OrderByDescending(o => o.CreatedAt) 
             .FirstAsync(o => o.Quantity > 1);
     }
-
+    
     public async Task<List<Order>> GetOrders()
     {
         return await _dbContext.Orders
             .AsNoTracking()
-            .Include(o => o.User)
             .Where(o => o.User.Status == UserStatus.Active)
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync();
