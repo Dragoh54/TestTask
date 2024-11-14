@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TestTask.Data;
+using TestTask.Enums;
 using TestTask.Models;
 using TestTask.Services.Interfaces;
 
@@ -20,7 +21,7 @@ public class UserService : IUserService
             .AsNoTracking()
             .Include(u => u.Orders)
             .OrderByDescending(u => u.Orders
-                .Where(o => o.CreatedAt.Year == 2003)
+                .Where(o => o.CreatedAt.Year == 2003 && o.Status == OrderStatus.Delivered) 
                 .Sum(o => o.Price * o.Quantity))
             .FirstAsync();
     }
