@@ -1,4 +1,5 @@
-﻿using TestTask.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TestTask.Data;
 using TestTask.Models;
 using TestTask.Services.Interfaces;
 
@@ -13,13 +14,21 @@ public class UserService : IUserService
         _dbContext = dbContext;
     }
     
-    public Task<User> GetUser()
+    public async Task<User> GetUser()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Users
+            .AsNoTracking()
+            .Include(u => u.Orders)
+            .OrderByDescending(u => u.Orders.Where(o => o.CreatedAt.Year == 2003))
+            .FirstAsync();
     }
 
-    public Task<List<User>> GetUsers()
+    public async Task<List<User>> GetUsers()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Users
+            .AsNoTracking()
+            .Include(u => u.Orders)
+            .OrderByDescending(u => u.Orders.Where(o => o.CreatedAt.Year == 2010))
+            .ToListAsync();
     }
 }
