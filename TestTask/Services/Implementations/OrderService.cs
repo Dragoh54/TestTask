@@ -1,4 +1,6 @@
-﻿using TestTask.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TestTask.Data;
+using TestTask.Enums;
 using TestTask.Models;
 using TestTask.Services.Interfaces;
 
@@ -13,13 +15,20 @@ public class OrderService : IOrderService
         _dbContext = dbContext;
     }
     
-    public Task<Order> GetOrder()
+    public async Task<Order> GetOrder()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Orders
+            .AsNoTracking()
+            .OrderByDescending(o => o.CreatedAt) 
+            .FirstAsync(o => o.Quantity > 1);
     }
 
-    public Task<List<Order>> GetOrders()
+    public async Task<List<Order>> GetOrders()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Orders
+            .AsNoTracking()
+            .Where(o => o.User.Status == UserStatus.Active)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync();
     }
 }
