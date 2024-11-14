@@ -19,7 +19,9 @@ public class UserService : IUserService
         return await _dbContext.Users
             .AsNoTracking()
             .Include(u => u.Orders)
-            .OrderByDescending(u => u.Orders.Where(o => o.CreatedAt.Year == 2003))
+            .OrderByDescending(u => u.Orders
+                .Where(o => o.CreatedAt.Year == 2003)
+                .Sum(o => o.Price * o.Quantity))
             .FirstAsync();
     }
 
